@@ -40,7 +40,6 @@ def human_readable(number):
 
 
 def plot_sales_data(yearly_revenue, year, plot_save_path):
-
     yearly_revenue = [(country, revenue) for country, revenue in yearly_revenue.items()]
     countries = [str(country) for country, _ in yearly_revenue]
     revenue = [int(revenue) for _, revenue in yearly_revenue]

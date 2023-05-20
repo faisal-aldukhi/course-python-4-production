@@ -121,7 +121,8 @@ def generate_file(data_gen_obj, file_details):
 
 def tst():
     data_gen = DataGenerator()
-
+    # print(inspect.stack()[0][3])
+    # return
     files_to_generate = [{
         'folder_name': inspect.stack()[0][3],
         'n_datapoints': 60000,

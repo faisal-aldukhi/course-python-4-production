@@ -112,6 +112,13 @@ class DataReader:
         }
         """
     ######################################## YOUR CODE HERE ##################################################
+        with open(self._fp, "r") as f:
+            header = f.readline().strip().split(self._sep)  # Read the header row
+            col_indices = [header.index(col) for col in self._col_names]  # Get the column indices we want
+            for line in f:
+                values = line.strip().split(self._sep)
+                row_dict = {self._col_names[i]: values[j] for i, j in enumerate(col_indices)}
+                yield row_dict
 
     ######################################## YOUR CODE HERE ##################################################
 

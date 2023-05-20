@@ -44,7 +44,15 @@ def revenue_per_region(dp: DataProcessor) -> Dict:
     }
     """
     ######################################## YOUR CODE HERE ##################################################
-
+    region_dic = {}
+    for row in dp.data_reader:
+        if row[constants.OutDataColNames.COUNTRY] not in region_dic.keys():
+            # add country if it does not exist 
+            region_dic[constants.OutDataColNames.COUNTRY] = float(row[constants.OutDataColNames.TOTAL_PRICE])
+        else:
+            # otherwise aggregate on existing country
+            region_dic[constants.OutDataColNames.COUNTRY] += float(row[constants.OutDataColNames.TOTAL_PRICE])
+    return region_dic
     ######################################## YOUR CODE HERE ##################################################
 
 
