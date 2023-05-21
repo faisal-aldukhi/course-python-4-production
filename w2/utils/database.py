@@ -10,6 +10,8 @@ from global_utils import make_dir
 class DB:
     def __init__(self, db_name: str = "database.sqlite") -> None:
         self._db_save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'database')
+        print("path for DB")
+        print(self._db_save_path)
         make_dir(self._db_save_path)
         self._connection = sqlite3.connect(os.path.join(self._db_save_path, db_name),
                                            check_same_thread=False)
@@ -45,7 +47,8 @@ class DB:
         Read more about datatypes in Sqlite here -> https://www.sqlite.org/datatype3.html
         """
     ######################################## YOUR CODE HERE ##################################################
-
+        self._connection.execute(f"CREATE TABLE IF NOT EXISTS {self._table_name} (process_id TEXT NOT NULL, file_name TEXT, file_path TEXT, description TEXT, start_time TEXT NOT NULL, end_time TEXT, percentage REAL)")
+        self._connection.commit()
     ######################################## YOUR CODE HERE ##################################################
 
     def insert(self, process_id, start_time, file_name=None, file_path=None,
@@ -63,7 +66,8 @@ class DB:
         :return: None
         """
     ######################################## YOUR CODE HERE ##################################################
-
+        self._connection.execute(f"INSERT INTO {self._table_name} VALUES (?,?,?,?,?,?,?)", (process_id, file_name, file_path, description, start_time, end_time, percentage))
+        self._connection.commit()
     ######################################## YOUR CODE HERE ##################################################
 
     def read_all(self) -> List[Dict]:
@@ -95,7 +99,10 @@ class DB:
         :return: None
         """
     ######################################## YOUR CODE HERE ##################################################
+        self._connection.execute(f'''UPDATE {self._table_name} SET percentage='{percentage}'
+                                     WHERE process_id='{process_id}';''')
 
+        self._connection.commit()
     ######################################## YOUR CODE HERE ##################################################
 
 
