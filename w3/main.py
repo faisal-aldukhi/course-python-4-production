@@ -3,7 +3,10 @@ from typing import List, Dict
 from tqdm import tqdm
 import os
 import multiprocessing
+import sys
+sys.path.append('../')
 from w1.data_processor import DataProcessor
+
 import constants
 from global_utils import get_file_name, make_dir, plot_sales_data
 import json
@@ -144,7 +147,7 @@ def main() -> List[Dict]:
     """
 
     st = time.time()
-    n_processes = 3 # you may modify this number - check out multiprocessing.cpu_count() as well
+    n_processes = 6 # you may modify this number - check out multiprocessing.cpu_count() as well
 
     parser = argparse.ArgumentParser(description="Choose from one of these : [tst|sml|bg]")
     parser.add_argument('--type',
@@ -164,14 +167,26 @@ def main() -> List[Dict]:
     batches = batch_files(file_paths=file_paths, n_processes=n_processes)
 
     ######################################## YOUR CODE HERE ##################################################
+    pool=multiprocessing.Pool(processes=n_processes)
+    with multiprocessing.Pool(processes=n_processes) as pool:
+        revenue_data = pool.starmap(run, [(batch, n_process) for n_process, batch in enumerate(batches)])
+        revenue_data = flatten(lst=revenue_data)
 
+        pool.close()
+        pool.join()
     ######################################## YOUR CODE HERE ##################################################
 
     en = time.time()
     print("Overall time taken : {}".format(en-st))
 
-    # should return revenue data
-    return [{}]
+    for yearly_data in revenue_data:
+        with open(os.path.join(output_save_folder, f'{yearly_data["file_name"]}.json'), 'w') as f:
+            f.write(json.dumps(yearly_data))
+
+        plot_sales_data(yearly_revenue=yearly_data['revenue_per_region'], year=yearly_data["file_name"],
+                        plot_save_path=os.path.join(output_save_folder, f'{yearly_data["file_name"]}.png'))
+
+    return revenue_data
 
 
 if __name__ == '__main__':
